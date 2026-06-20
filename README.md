@@ -1,323 +1,190 @@
-🇮🇳 FormSahay
-
 <div align="center">
 
-AI-Powered Assistant for Government Forms, Scholarships & Welfare Schemes
+# 🇮🇳 FormSahay
 
-Transforming complex government paperwork into a simple, intelligent, and guided experience.
+### AI-Powered Assistant for Government Forms, Scholarships & Welfare Schemes
+
+Transforming complex government paperwork into a simple, intelligent and guided experience.
+
+<br>
+
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
+![Node](https://img.shields.io/badge/Node.js-20-339933?style=for-the-badge&logo=node.js)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)
+![Groq](https://img.shields.io/badge/Groq-AI-orange?style=for-the-badge)
+![OCR](https://img.shields.io/badge/PaddleOCR-Fast-red?style=for-the-badge)
+
+<br>
+
+![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
+![Version](https://img.shields.io/badge/Version-v1.0-blue?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)
 
 </div>
 
-⸻
+---
 
-🚀 The Problem
+## 🚀 Why FormSahay?
 
-Every year millions of citizens struggle with:
+Every year millions of citizens lose opportunities because government forms are difficult to understand.
 
-* 📄 Government forms
-* 🎓 Scholarship applications
-* 🏛️ Welfare schemes
-* 📑 Certificate verification
-* ⏰ Missed deadlines
-* ❌ Rejected applications
-
-Government documents are often difficult to understand, scattered across multiple portals, and filled with complex requirements.
-
-⸻
-
-💡 The Solution
-
-FormSahay acts as an AI-powered citizen assistant that helps users:
+FormSahay acts as an intelligent AI assistant that helps users:
 
 ✅ Understand government notices
 
-✅ Check eligibility instantly
+✅ Check scheme eligibility
 
-✅ Verify uploaded documents
+✅ Verify required documents
 
 ✅ Detect missing certificates
 
 ✅ Track important deadlines
 
-✅ Discover relevant government schemes
+✅ Discover welfare opportunities
 
-Instead of spending hours reading documents, users can upload a file and receive actionable insights within seconds.
+---
 
-⸻
+## ✨ Core Features
 
-✨ Key Features
+| Feature | Description |
+|----------|------------|
+| 📄 AI Notice Analysis | Extract eligibility, deadlines and required documents |
+| 🎯 Eligibility Engine | Check scholarship and scheme eligibility |
+| 📂 Document Validator | Verify uploaded certificates |
+| 🧠 AI Explanation Engine | Convert complex government language into simple English |
+| ⏰ Deadline Tracking | Never miss applications and renewals |
+| 🔍 Scheme Discovery | Discover matching schemes automatically |
 
-🤖 AI Notice Analysis
+---
 
-Upload any government notice, circular, PDF, or image.
+## 📸 Preview
 
-FormSahay automatically extracts:
+### Landing Page
 
-* Scheme name
-* Eligibility criteria
-* Required documents
-* Important deadlines
-* Key instructions
+<p align="center">
+<img src="./screenshots/homepage.png" width="100%">
+</p>
 
-⸻
+### AI Analysis Dashboard
 
-🎯 AI Eligibility Engine
+<p align="center">
+<img src="./screenshots/dashboard.png" width="100%">
+</p>
 
-Determine whether a user qualifies for:
+---
 
-* Scholarships
-* Welfare programs
-* Government benefits
+## 🏗 Architecture
 
-Based on:
-
-* Income
-* Category
-* State
-* Age
-* Educational background
-
-⸻
-
-📂 AI Document Validator
-
-Upload certificates and documents.
-
-The system identifies:
-
-* Missing documents
-* Invalid uploads
-* Incomplete requirements
-* Potential application blockers
-
-⸻
-
-🧠 AI Explanation Engine
-
-Converts complex government language into simple human-readable guidance.
-
-Example:
-
-Original Notice
-
-Income certificate issued by competent authority.
-
-FormSahay Explanation
-
-Upload a valid income certificate issued by an authorized government officer.
-
-⸻
-
-⏳ AI Deadline Tracking
-
-Never miss:
-
-* Scholarship deadlines
-* Verification deadlines
-* Application windows
-* Certificate expiry dates
-
-⸻
-
-🔍 AI Scheme Discovery
-
-Discover schemes that match your profile automatically.
-
-No manual searching.
-
-No complicated eligibility checks.
-
-⸻
-
-🏗️ System Architecture
-
+```text
 User Upload
-      │
-      ▼
-Frontend (React)
-      │
-      ▼
-Backend API (Node.js)
-      │
-      ▼
-OCR Layer (PaddleOCR)
-      │
-      ▼
-AI Reasoning Layer (Groq + DeepSeek R1)
-      │
-      ▼
-Eligibility Engine
-      │
-      ▼
-Document Validation Engine
-      │
-      ▼
+    │
+    ▼
+PaddleOCR
+    │
+    ▼
+Groq AI Engine
+    │
+    ▼
+Eligibility Analyzer
+    │
+    ▼
+Document Validator
+    │
+    ▼
 Scheme Recommendation Engine
-      │
-      ▼
-MongoDB Database
-      │
-      ▼
-Results Dashboard
-
-⸻
-
-⚙️ Tech Stack
-
-Frontend
-
-* React.js
-* Vite
-* Tailwind CSS
-* React Router
-* Axios
-
-Backend
-
-* Node.js
-* Express.js
-
-Database
-
-* MongoDB Atlas
-
-AI Layer
-
-* Groq API
-* DeepSeek R1
-* Llama Models
-
-OCR
-
-* PaddleOCR
-* PDF Parsing
-
-Deployment
-
-* Vercel
-* Render
-
-⸻
-
-🔄 Workflow
-
-Upload Notice
-      │
-      ▼
-OCR Processing
-      │
-      ▼
-Text Extraction
-      │
-      ▼
-AI Analysis
-      │
-      ▼
-Eligibility Detection
-      │
-      ▼
-Document Verification
-      │
-      ▼
-Scheme Recommendations
-      │
-      ▼
+    │
+    ▼
 Citizen Dashboard
+```
 
-⸻
+---
 
-📸 Screenshots
+## ⚡ Tech Stack
 
-Landing Page
+### Frontend
 
-Add screenshot here
+- React
+- Vite
+- Tailwind CSS
+- React Router
 
-![Homepage](./screenshots/homepage.png)
+### Backend
 
-AI Analysis Dashboard
+- Node.js
+- Express.js
 
-Add screenshot here
+### AI
 
-![Dashboard](./screenshots/dashboard.png)
+- Groq API
+- DeepSeek R1
+- Llama Models
 
-⸻
+### OCR
 
-📊 Impact
+- PaddleOCR
 
-FormSahay aims to:
+### Database
 
-* Reduce application errors
-* Improve scholarship accessibility
-* Increase awareness of welfare programs
-* Simplify government interactions
-* Save time for millions of citizens
+- MongoDB Atlas
 
-⸻
+### Deployment
 
-🌟 Future Roadmap
+- Vercel
+- Render
 
-Phase 1
+---
 
-* Scholarships
-* Certificates
-* Welfare Notices
+## 🔄 User Workflow
 
-Phase 2
+```mermaid
+flowchart LR
 
-* State Government Schemes
-* Employment Opportunities
-* Farmer Welfare Programs
+A[Upload Notice] --> B[OCR Extraction]
+B --> C[AI Analysis]
+C --> D[Eligibility Check]
+D --> E[Document Validation]
+E --> F[Scheme Discovery]
+F --> G[Results Dashboard]
+```
 
-Phase 3
+---
 
-* Complete AI Citizen Assistant
+## 🌟 Future Roadmap
 
-Supporting:
+- Multi-language support
+- Aadhaar based verification
+- Real-time government scheme updates
+- WhatsApp integration
+- Mobile application
+- Voice assistant for rural users
 
-* Passport Applications
-* PAN Services
-* Driving Licenses
-* Voter ID Services
-* Government Benefits
+---
 
-⸻
-
-🏆 Why FormSahay?
-
-Unlike generic chatbots, FormSahay combines:
-
-* OCR Intelligence
-* AI Reasoning
-* Eligibility Analysis
-* Document Verification
-* Scheme Discovery
-* Deadline Management
-
-into a unified citizen assistance platform.
-
-⸻
-
-🤝 Contributing
+## 🤝 Contributing
 
 Contributions are welcome.
 
-1. Fork the repository
-2. Create a new branch
-3. Commit your changes
-4. Open a Pull Request
+```bash
+git clone https://github.com/B2Aryan/FormSahay_Portal.git
+cd FormSahay_Portal
+npm install
+npm run dev
+```
 
-⸻
+---
 
-📜 License
+## 📜 License
 
-This project is licensed under the MIT License.
+MIT License
 
-⸻
+---
 
 <div align="center">
 
-🇮🇳 Building a Smarter Bridge Between Citizens and Government Services
+### 🇮🇳 Building a Smarter Bridge Between Citizens and Government Services
 
-FormSahay — Understand. Verify. Apply.
+### FormSahay — Understand • Verify • Apply
+
+⭐ Star the repository if you find it useful
 
 </div>
