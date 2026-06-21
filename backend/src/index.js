@@ -9,9 +9,13 @@ const apiRoutes = require('./routes/api');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend development
+// Enable CORS for frontend development / production
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 

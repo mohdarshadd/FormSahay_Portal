@@ -1,16 +1,65 @@
-# React + Vite
+# FormSahay Portal - Frontend Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend client for the **FormSahay Portal**, built using React, Vite, and TailwindCSS.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tech Stack & Features
 
-## React Compiler
+- **React + Vite**: High-performance development server and bundle optimization.
+- **TailwindCSS**: Premium utility-first styling with custom animation extensions.
+- **Framer Motion**: Smooth page transitions, hover interactions, and micro-animations.
+- **Lucide React**: Clean, modern iconography.
+- **React Router (V7)**: Client-side routing for seamless page navigation.
+- **React Hot Toast**: Beautiful notification and toast messages.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Installation
+Ensure you are in the `frontend` directory and install dependencies:
+```bash
+npm install
+```
+
+### Running Locally
+To launch the Vite development server:
+```bash
+npm run dev
+```
+The application will run locally at [http://localhost:5173](http://localhost:5173).
+
+### Building for Production
+To generate the static production build:
+```bash
+npm run build
+```
+This compiles the code into optimized chunks inside the `dist/` directory.
+
+### Previewing the Production Build
+To preview the production build locally:
+```bash
+npm run preview
+```
+
+---
+
+## ⚙️ Environment Configuration
+
+Create a `.env` file in this directory to specify the backend API URL:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+In production, update `VITE_API_URL` to point to your deployed backend API URL (e.g. `https://api.formsahay.com/api`).
+
+---
+
+## ☁️ Vercel Deployment Configuration
+
+This directory is ready for instant deployment on Vercel:
+- **Build Command**: `vite build` (via `npm run build`)
+- **Output Directory**: `dist`
+- **Routing**: Supported via the `vercel.json` rewrite rule to redirect all routes to `index.html`, preventing 404 errors during page refreshes on sub-routes.
