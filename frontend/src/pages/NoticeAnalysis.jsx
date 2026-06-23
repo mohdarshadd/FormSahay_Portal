@@ -33,6 +33,7 @@ const NoticeAnalysis = () => {
   
   // Results
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [downloadUrl, setDownloadUrl] = useState('');
   const [customText, setCustomText] = useState('');
   const [explanationResult, setExplanationResult] = useState(null);
   const [explaining, setExplaining] = useState(false);
@@ -112,6 +113,7 @@ const NoticeAnalysis = () => {
       
       setTimeout(() => {
         setAnalysisResult(response.data.analysis);
+        setDownloadUrl(response.data.downloadUrl || '');
         setCustomText(response.data.analysis.instructions.join('\n'));
         toast.success("Document analyzed successfully!");
         setLoading(false);
@@ -320,8 +322,18 @@ const NoticeAnalysis = () => {
               >
                 Check Eligibility <ArrowRight className="w-4 h-4" />
               </button>
+              {downloadUrl && (
+                <a
+                  href={downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline px-4 py-2 text-xs inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" /> Download
+                </a>
+              )}
               <button 
-                onClick={() => { setAnalysisResult(null); setFile(null); }}
+                onClick={() => { setAnalysisResult(null); setFile(null); setDownloadUrl(''); }}
                 className="btn-outline px-4 py-2 text-xs"
               >
                 Upload New

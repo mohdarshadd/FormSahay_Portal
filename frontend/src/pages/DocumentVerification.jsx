@@ -381,6 +381,16 @@ const DocumentVerification = () => {
                           <span className="text-[10px] text-slate-400 block max-w-xs truncate">
                             File: {doc.fileName}
                           </span>
+                          {doc.downloadUrl && (
+                            <a
+                              href={doc.downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-primary hover:underline font-semibold inline-flex items-center gap-1"
+                            >
+                              <FileText className="w-3 h-3" /> Download
+                            </a>
+                          )}
                         </div>
                       </div>
                       {getStatusBadge(doc.status)}

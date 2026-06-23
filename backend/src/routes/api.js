@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 // Services
 const ocrService = require('../services/ocrService');
@@ -13,6 +15,16 @@ const { firestore } = require('../config/firebase-admin');
 const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }
 });
+
+// Helper: save uploaded file to local disk and return public URL
+const saveFileToDisk = (buffer, subDir, uid, originalName, mimetype) => {
+  const dir = path.join(__dirname, '../../uploads', subDir);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const safeName = `${uid}_${Date.now()}_${originalName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const filePath = path.join(dir, safeName);
+  fs.writeFileSync(filePath, buffer);
+  return `/uploads/${subDir}/${safeName}`;
+};
 
 /**
  * AUTH: Login / Register user via Firebase token
@@ -190,7 +202,13 @@ router.post('/analysis/notice', authenticate, upload.single('file'), async (req,
     // 2. Query AI distills details
     const analysis = await aiService.analyzeNotice(ocrResult.text);
 
-    // 3. Save to Firestore for user history (non-blocking)
+    // 3. Save file to local disk
+    const downloadUrl = saveFileToDisk(
+      req.file.buffer, 'analyses', req.user.uid,
+      req.file.originalname, req.file.mimetype
+    );
+
+    // 4. Save to Firestore for user history (non-blocking)
     if (firestore && req.user?.email) {
       firestore.collection('analyses').add({
         userId: req.user.uid,
@@ -204,6 +222,7 @@ router.post('/analysis/notice', authenticate, upload.single('file'), async (req,
         contactInformation: analysis.contactInformation || '',
         fileName: req.file.originalname || '',
         fileSize: req.file.size || 0,
+        downloadUrl: downloadUrl || '',
         savedAt: new Date().toISOString(),
       }).catch(err => console.error('Firestore save analysis error:', err.message));
     }
@@ -212,7 +231,8 @@ router.post('/analysis/notice', authenticate, upload.single('file'), async (req,
       success: true,
       ocrMethod: ocrResult.method,
       ocrConfidence: ocrResult.confidence,
-      analysis
+      analysis,
+      downloadUrl
     });
   } catch (err) {
     console.error("Notice analysis endpoint error:", err);
@@ -366,7 +386,14 @@ router.post('/verification/check', authenticate, upload.any(), async (req, res) 
       verifyReport.fileName = file.originalname;
       verifyReport.fileSize = file.size;
 
-      // 3. Save verification details if userId is valid
+      // 3. Save file to local disk
+      const fileUrl = saveFileToDisk(
+        file.buffer, 'documents', req.user.uid,
+        file.originalname, file.mimetype
+      );
+      verifyReport.downloadUrl = fileUrl;
+
+      // 4. Save verification details if userId is valid
       if (userId) {
         await dbService.createDocument({
           userId,
@@ -399,6 +426,7 @@ router.post('/verification/check', authenticate, upload.any(), async (req, res) 
           validity: r.validity || {},
           issues: r.issues || [],
           action: r.action || '',
+          downloadUrl: r.downloadUrl || '',
         })),
         verifiedAt: new Date().toISOString(),
       }).catch(err => console.error('Firestore save verification error:', err.message));

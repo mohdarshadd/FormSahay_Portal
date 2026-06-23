@@ -33,6 +33,9 @@ coverage/
 # Logs and databases
 logs/
 *.log
+
+# User uploaded files
+backend/uploads/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
