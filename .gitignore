@@ -23,6 +23,7 @@ obj/
 .env.stage
 *.pem
 *.key
+service-account.json
 
 # Testing and coverage
 coverage/

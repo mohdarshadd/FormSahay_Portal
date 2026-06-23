@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 import { 
   FileText, 
   ShieldCheck, 
@@ -18,12 +19,14 @@ import {
   ChevronRight,
   BellRing,
   Info,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState('');
   
@@ -227,7 +230,7 @@ const Dashboard = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-indigo-500/10 opacity-30"></div>
         <div className="space-y-1 relative z-10">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome, {profile?.name || "Guest Citizen"}! 👋
+            Welcome, {authUser?.displayName || authUser?.email?.split('@')[0] || profile?.name || "Guest Citizen"}! 👋
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 font-medium">
             Here is your personalized government assistance dashboard and scheme checklist.
