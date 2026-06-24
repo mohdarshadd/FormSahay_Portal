@@ -23,6 +23,7 @@ obj/
 .env.stage
 *.pem
 *.key
+service-account.json
 
 # Testing and coverage
 coverage/
@@ -32,12 +33,16 @@ coverage/
 # Logs and databases
 logs/
 *.log
+
+# User uploaded files
+backend/uploads/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 *.sqlite
 db_fallback.json.tmp
+*.traineddata
 
 # OS-specific files
 .DS_Store

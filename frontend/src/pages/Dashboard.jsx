@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import { 
   FileText, 
   ShieldCheck, 
@@ -18,12 +19,14 @@ import {
   ChevronRight,
   BellRing,
   Info,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState('');
   
@@ -37,84 +40,98 @@ const Dashboard = () => {
   // Selected Analysis Modal
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
   useEffect(() => {
-    // 1. Load User Profile from localStorage
-    const savedProfile = localStorage.getItem('userProfile');
-    const savedUserId = localStorage.getItem('userId');
-    
-    if (savedProfile) {
-      const parsed = JSON.parse(savedProfile);
-      setProfile(parsed);
-      if (savedUserId) {
-        setUserId(savedUserId);
+    const loadData = async () => {
+      // 0. Try to fetch history from Firestore via API
+      let firestoreData = null;
+      try {
+        const res = await api.get('/users/me/history');
+        firestoreData = res.data.history;
+      } catch (err) {
+        // API failed, fall back to localStorage
       }
-      // Load Recommendations based on profile
-      fetchRecommendations(parsed);
-    } else {
-      // Seed fallback mock profile for visual excellence out of the box
-      const demoProfile = {
-        name: "Rahul Sharma",
-        email: "rahul.sharma@domain.in",
-        state: "Uttar Pradesh",
-        age: 22,
-        category: "OBC",
-        income: 180000,
-        education: "Graduate",
-        gender: "Male",
-        disability: false
-      };
-      setProfile(demoProfile);
-      fetchRecommendations(demoProfile);
-    }
 
-    // 2. Load Recent Analyses
-    const savedAnalyses = localStorage.getItem('recentAnalyses');
-    if (savedAnalyses) {
-      setRecentAnalyses(JSON.parse(savedAnalyses));
-    } else {
-      // Seed demo analyses
-      const demoAnalyses = [
-        {
-          schemeName: "National Post Matric Scholarship Scheme for SC/ST/OBC",
-          eligibility: ["SC, ST, OBC students enrolled in College/University", "Family income < ₹2.5L per annum"],
-          documents: ["Aadhaar Card", "Caste Certificate", "Income Certificate", "Previous Marksheet"],
-          deadline: "2026-12-15",
-          instructions: ["Register on National Scholarship Portal", "Ensure bank account is seeded with Aadhaar", "Upload scanned certificates"],
-          benefitAmount: "₹25,000 to ₹75,000 per annum",
-          contactInformation: "Ministry of Minority Affairs, Toll Free: 1800-112-200",
-          savedAt: new Date().toISOString()
-        },
-        {
-          schemeName: "UP Post Matric Scholarship Scheme 2026",
-          eligibility: ["Uttar Pradesh resident students", "OBC, SC, ST or EWS categories", "Income < ₹2L"],
-          documents: ["Aadhaar", "Income Certificate", "Caste Certificate", "UP Domicile", "Marksheet"],
-          deadline: "2026-11-30",
-          instructions: ["Apply through UP Scholarship portal", "Submit printed copy to college", "Seed Aadhaar with DBT bank"],
-          benefitAmount: "Fee Reimbursement + stipend of ₹500/month",
-          contactInformation: "UP Social Welfare Department, Helpline: 1800-180-5131",
-          savedAt: new Date().toISOString()
+      // 1. Load User Profile from localStorage or API
+      const savedProfile = localStorage.getItem('userProfile');
+      const savedUserId = localStorage.getItem('userId');
+      
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        setProfile(parsed);
+        if (savedUserId) {
+          setUserId(savedUserId);
         }
-      ];
-      setRecentAnalyses(demoAnalyses);
-      localStorage.setItem('recentAnalyses', JSON.stringify(demoAnalyses));
-    }
+        fetchRecommendations(parsed);
+      } else {
+        const demoProfile = {
+          name: authUser?.displayName || "Rahul Sharma",
+          email: authUser?.email || "rahul.sharma@domain.in",
+          state: "Uttar Pradesh",
+          age: 22,
+          category: "OBC",
+          income: 180000,
+          education: "Graduate",
+          gender: "Male",
+          disability: false
+        };
+        setProfile(demoProfile);
+        fetchRecommendations(demoProfile);
+      }
 
-    // 3. Load Verified Documents
-    const savedDocs = localStorage.getItem('verificationReports');
-    if (savedDocs) {
-      setVerifiedDocs(JSON.parse(savedDocs));
-    } else {
-      // Seed demo verified docs
-      const demoDocs = [
-        { type: 'AadhaarCard', status: 'verified', validity: { valid: true, expires: 'Permanent' }, fileName: 'Aadhaar_Rahul.pdf' },
-        { type: 'IncomeCertificate', status: 'verified', validity: { valid: true, expires: '2027-03-31' }, fileName: 'Income_Certificate_2026.jpg' },
-        { type: 'DomicileCertificate', status: 'partial', validity: { valid: false, expires: '2025-01-10' }, fileName: 'Domicile_Old.pdf', issues: ['Document validity has expired!'] }
-      ];
-      setVerifiedDocs(demoDocs);
-      localStorage.setItem('verificationReports', JSON.stringify(demoDocs));
-    }
+      // 2. Load Recent Analyses — prefer Firestore, then localStorage, then demo
+      if (firestoreData?.analyses?.length > 0) {
+        setRecentAnalyses(firestoreData.analyses);
+      } else {
+        const savedAnalyses = localStorage.getItem('recentAnalyses');
+        if (savedAnalyses) {
+          setRecentAnalyses(JSON.parse(savedAnalyses));
+        } else {
+          const demoAnalyses = [
+            {
+              schemeName: "National Post Matric Scholarship Scheme for SC/ST/OBC",
+              eligibility: ["SC, ST, OBC students enrolled in College/University", "Family income < ₹2.5L per annum"],
+              documents: ["Aadhaar Card", "Caste Certificate", "Income Certificate", "Previous Marksheet"],
+              deadline: "2026-12-15",
+              instructions: ["Register on National Scholarship Portal", "Ensure bank account is seeded with Aadhaar", "Upload scanned certificates"],
+              benefitAmount: "₹25,000 to ₹75,000 per annum",
+              contactInformation: "Ministry of Minority Affairs, Toll Free: 1800-112-200",
+              savedAt: new Date().toISOString()
+            },
+            {
+              schemeName: "UP Post Matric Scholarship Scheme 2026",
+              eligibility: ["Uttar Pradesh resident students", "OBC, SC, ST or EWS categories", "Income < ₹2L"],
+              documents: ["Aadhaar", "Income Certificate", "Caste Certificate", "UP Domicile", "Marksheet"],
+              deadline: "2026-11-30",
+              instructions: ["Apply through UP Scholarship portal", "Submit printed copy to college", "Seed Aadhaar with DBT bank"],
+              benefitAmount: "Fee Reimbursement + stipend of ₹500/month",
+              contactInformation: "UP Social Welfare Department, Helpline: 1800-180-5131",
+              savedAt: new Date().toISOString()
+            }
+          ];
+          setRecentAnalyses(demoAnalyses);
+        }
+      }
+
+      // 3. Load Verified Documents — prefer Firestore, then localStorage, then demo
+      if (firestoreData?.verifications?.length > 0) {
+        const allDocs = firestoreData.verifications.flatMap(v => v.documents || []);
+        setVerifiedDocs(allDocs);
+      } else {
+        const savedDocs = localStorage.getItem('verificationReports');
+        if (savedDocs) {
+          setVerifiedDocs(JSON.parse(savedDocs));
+        } else {
+          const demoDocs = [
+            { type: 'AadhaarCard', status: 'verified', validity: { valid: true, expires: 'Permanent' }, fileName: 'Aadhaar_Rahul.pdf' },
+            { type: 'IncomeCertificate', status: 'verified', validity: { valid: true, expires: '2027-03-31' }, fileName: 'Income_Certificate_2026.jpg' },
+            { type: 'DomicileCertificate', status: 'partial', validity: { valid: false, expires: '2025-01-10' }, fileName: 'Domicile_Old.pdf', issues: ['Document validity has expired!'] }
+          ];
+          setVerifiedDocs(demoDocs);
+        }
+      }
+    };
+
+    loadData();
   }, []);
 
   // Compute deadlines based on recent analyses and document expiries
@@ -172,7 +189,7 @@ const Dashboard = () => {
   const fetchRecommendations = async (userProfile) => {
     setLoadingRecs(true);
     try {
-      const response = await axios.post(`${API_URL}/recommendations/schemes`, userProfile);
+      const response = await api.post('/recommendations/schemes', userProfile);
       setRecommendations(response.data.schemes);
     } catch (err) {
       console.error("Failed to fetch recommendations", err);
@@ -192,7 +209,7 @@ const Dashboard = () => {
 
     try {
       // 1. Post to backend DB
-      await axios.post(`${API_URL}/notifications/send`, notificationPayload);
+      await api.post('/notifications/send', notificationPayload);
       
       // 2. Simulate EmailJS Event Trigger
       toast.success(
@@ -227,7 +244,7 @@ const Dashboard = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-indigo-500/10 opacity-30"></div>
         <div className="space-y-1 relative z-10">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome, {profile?.name || "Guest Citizen"}! 👋
+            Welcome, {authUser?.displayName || authUser?.email?.split('@')[0] || profile?.name || "Guest Citizen"}! 👋
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 font-medium">
             Here is your personalized government assistance dashboard and scheme checklist.

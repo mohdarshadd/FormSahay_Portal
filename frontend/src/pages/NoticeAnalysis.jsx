@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 import { 
   UploadCloud, 
   FileText, 
@@ -33,12 +33,11 @@ const NoticeAnalysis = () => {
   
   // Results
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [downloadUrl, setDownloadUrl] = useState('');
   const [customText, setCustomText] = useState('');
   const [explanationResult, setExplanationResult] = useState(null);
   const [explaining, setExplaining] = useState(false);
   const [showExplanationBox, setShowExplanationBox] = useState(false);
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -106,11 +105,7 @@ const NoticeAnalysis = () => {
         });
       }, 800);
 
-      const response = await axios.post(`${API_URL}/analysis/notice`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await api.post('/analysis/notice', formData);
 
       clearInterval(interval);
       setProgress(100);
@@ -118,6 +113,7 @@ const NoticeAnalysis = () => {
       
       setTimeout(() => {
         setAnalysisResult(response.data.analysis);
+        setDownloadUrl(response.data.downloadUrl || '');
         setCustomText(response.data.analysis.instructions.join('\n'));
         toast.success("Document analyzed successfully!");
         setLoading(false);
@@ -139,9 +135,7 @@ const NoticeAnalysis = () => {
 
     setExplaining(true);
     try {
-      const response = await axios.post(`${API_URL}/analysis/explanation`, {
-        text: textToExplain
-      });
+      const response = await api.post('/analysis/explanation', { text: textToExplain });
 
       setExplanationResult(response.data.result);
       toast.success("Explanation generated!");
@@ -328,8 +322,18 @@ const NoticeAnalysis = () => {
               >
                 Check Eligibility <ArrowRight className="w-4 h-4" />
               </button>
+              {downloadUrl && (
+                <a
+                  href={downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline px-4 py-2 text-xs inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" /> Download
+                </a>
+              )}
               <button 
-                onClick={() => { setAnalysisResult(null); setFile(null); }}
+                onClick={() => { setAnalysisResult(null); setFile(null); setDownloadUrl(''); }}
                 className="btn-outline px-4 py-2 text-xs"
               >
                 Upload New

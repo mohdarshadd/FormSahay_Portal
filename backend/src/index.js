@@ -6,6 +6,16 @@ const { connectDB } = require('./config/db');
 const { seedSchemes } = require('./services/seedService');
 const apiRoutes = require('./routes/api');
 
+// Safety net for worker library crashes (tesseract.js, etc.)
+process.on('uncaughtException', (err) => {
+  if (err.message?.includes('Worker') || err.message?.includes('tesseract') || err.message?.includes('pixRead')) return;
+  console.error('Uncaught exception:', err);
+});
+process.on('unhandledRejection', (err) => {
+  if (err.message?.includes('Worker') || err.message?.includes('tesseract') || err.message?.includes('pixRead')) return;
+  console.error('Unhandled rejection:', err);
+});
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -47,7 +57,7 @@ const startServer = async () => {
   await seedSchemes();
 
   // 3. Bind port
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode.`);
   });
 };

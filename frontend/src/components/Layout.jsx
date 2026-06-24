@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { 
   Sun, 
   Moon, 
@@ -12,11 +13,13 @@ import {
   ShieldCheck, 
   HelpCircle,
   Flag,
-  FileCheck
+  FileCheck,
+  LogOut
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const { darkMode, toggleTheme } = useTheme();
+  const { user, logOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -82,6 +85,40 @@ const Layout = ({ children }) => {
 
             {/* Utilities */}
             <div className="flex items-center gap-2">
+              {/* Auth Section */}
+              {user ? (
+                <div className="hidden sm:flex items-center gap-2 mr-1">
+                  <div className="w-7 h-7 rounded-full bg-blue-800 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                    {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[100px] truncate">
+                    {user.displayName || user.email?.split('@')[0]}
+                  </span>
+                  <button
+                    onClick={logOut}
+                    className="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                    title="Sign out"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-1.5 mr-1">
+                  <Link
+                    to="/login"
+                    className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-400 px-2 py-1 transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="text-xs font-semibold text-white bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded-button transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+
               {/* Discreet Dark Mode Switcher */}
               <button
                 onClick={toggleTheme}
@@ -126,6 +163,44 @@ const Layout = ({ children }) => {
                   </Link>
                 );
               })}
+              {/* Mobile Auth Section */}
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-2 mt-2">
+                {user ? (
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-blue-800 flex items-center justify-center text-white text-[10px] font-bold">
+                        {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                      </div>
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                        {user.displayName || user.email}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => { logOut(); setMobileMenuOpen(false); }}
+                      className="text-xs text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-4 py-2">
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex-1 text-center text-xs font-semibold text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 px-3 py-2 rounded-button hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex-1 text-center text-xs font-semibold text-white bg-blue-800 hover:bg-blue-900 px-3 py-2 rounded-button transition-colors"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
