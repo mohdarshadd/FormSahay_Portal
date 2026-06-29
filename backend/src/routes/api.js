@@ -42,6 +42,9 @@ router.post('/auth/login', async (req, res) => {
     const { getAuth } = require('firebase-admin/auth');
     const token = authHeader.split('Bearer ')[1];
     const app = admin.getApps()[0];
+    if (!app) {
+      return res.status(500).json({ error: 'Firebase not initialized' });
+    }
     const auth = getAuth(app);
     const decoded = await auth.verifyIdToken(token);
 
